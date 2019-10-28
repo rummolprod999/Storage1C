@@ -1,6 +1,7 @@
 package models
 
 import (
+	"bytes"
 	"encoding/xml"
 	"io/ioutil"
 	"os"
@@ -32,8 +33,13 @@ func (t *Objects) CreateModel(path string) (error, Objects) {
 	if runtime.GOOS == "windows" {
 		repairString = repairString
 	}
-	if err := xml.Unmarshal([]byte(repairString), &object); err != nil {
-		return err, object
+	/*if err := xml.Unmarshal([]byte(repairString), &history); err != nil {
+		return err, history
+	}*/
+	d := xml.NewDecoder(bytes.NewReader([]byte(repairString)))
+	d.CharsetReader = identReader
+	if err := d.Decode(&object); err != nil {
+		panic(err)
 	}
 	return nil, object
 }

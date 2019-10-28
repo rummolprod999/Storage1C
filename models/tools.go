@@ -3,6 +3,7 @@ package models
 import (
 	"bytes"
 	"fmt"
+	"io"
 	"strings"
 	"unicode/utf16"
 	"unicode/utf8"
@@ -11,6 +12,9 @@ import (
 func ReplaceBadSymbols(s string) string {
 	x := strings.ReplaceAll(s, "\u0000", "")
 	return x
+}
+func identReader(encoding string, input io.Reader) (io.Reader, error) {
+	return input, nil
 }
 
 func DecodeUTF16(b []byte) (string, error) {
