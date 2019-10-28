@@ -39,6 +39,11 @@ func (t *Storage1C) Run() {
 		Logging(err)
 		return
 	}
+	err = t.createModels()
+	if err != nil {
+		Logging(err)
+		return
+	}
 }
 
 func (t *Storage1C) RunExternalProgram() error {
@@ -69,6 +74,36 @@ func (t *Storage1C) CheckXml() error {
 	t.pathObjects = filepath.FromSlash(fmt.Sprintf("%s/%s", PathTemp, "OBJECTS.xml"))
 	if _, err := os.Stat(t.pathObjects); os.IsNotExist(err) {
 		return err
+	}
+	return nil
+}
+
+func (t *Storage1C) createModels() error {
+	var users Users
+	err, users := users.CreateModel(t.pathUsers)
+	if err != nil {
+		return err
+	}
+
+	var history History
+	err, history = history.CreateModel(t.pathHistory)
+	if err != nil {
+		return err
+	}
+
+	var objects Objects
+	err, objects = objects.CreateModel(t.pathObjects)
+	if err != nil {
+		return err
+	}
+
+	var versions Versions
+	err, versions = versions.CreateModel(t.pathVersions)
+	if err != nil {
+		return err
+	}
+	for _, v := range history.Records {
+		fmt.Println("%+v", v)
 	}
 	return nil
 }
