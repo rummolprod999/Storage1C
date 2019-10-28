@@ -7,5 +7,8 @@ func init() {
 func main() {
 	defer SaveStack()
 	Logging("start")
+	st := Storage1C{}
+	st.Init()
+	st.Run()
 	Logging("end")
 }
