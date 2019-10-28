@@ -1,0 +1,17 @@
+{
+  "ServerPort": 8081,
+  "PathCTool1cd": "/home/alex/ctools/tool1cd/build/bin/ctool1cd",
+  "DB": {
+    "Name": "",
+    "Host": "localhost",
+    "User": "parser",
+    "Password": "1234",
+    "Port": 3306
+  },
+  "Storages": [
+    {
+      "Name": "lite",
+      "Path": "/home/alex/ctools/tool1cd/build/bin/11111/1cv8ddb.1CD"
+    }
+  ]
+}
