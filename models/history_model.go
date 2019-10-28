@@ -1,9 +1,10 @@
-package main
+package models
 
 import (
 	"encoding/xml"
 	"io/ioutil"
 	"os"
+	"runtime"
 )
 
 type History struct {
@@ -33,6 +34,9 @@ func (t *History) CreateModel(path string) (error, History) {
 		return err, history
 	}
 	repairString := ReplaceBadSymbols(string(byteValue))
+	if runtime.GOOS == "windows" {
+		repairString = repairString
+	}
 	if err := xml.Unmarshal([]byte(repairString), &history); err != nil {
 		return err, history
 	}

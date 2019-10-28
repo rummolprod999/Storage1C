@@ -1,9 +1,10 @@
-package main
+package models
 
 import (
 	"encoding/xml"
 	"io/ioutil"
 	"os"
+	"runtime"
 )
 
 type Objects struct {
@@ -28,6 +29,9 @@ func (t *Objects) CreateModel(path string) (error, Objects) {
 		return err, object
 	}
 	repairString := ReplaceBadSymbols(string(byteValue))
+	if runtime.GOOS == "windows" {
+		repairString = repairString
+	}
 	if err := xml.Unmarshal([]byte(repairString), &object); err != nil {
 		return err, object
 	}

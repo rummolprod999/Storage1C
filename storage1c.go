@@ -1,6 +1,7 @@
 package main
 
 import (
+	"Storage1C/models"
 	"bytes"
 	"fmt"
 	"os"
@@ -79,25 +80,25 @@ func (t *Storage1C) CheckXml() error {
 }
 
 func (t *Storage1C) createModels() error {
-	var users Users
+	var users models.Users
 	err, users := users.CreateModel(t.pathUsers)
 	if err != nil {
 		return err
 	}
 
-	var history History
+	var history models.History
 	err, history = history.CreateModel(t.pathHistory)
 	if err != nil {
 		return err
 	}
 
-	var objects Objects
+	var objects models.Objects
 	err, objects = objects.CreateModel(t.pathObjects)
 	if err != nil {
 		return err
 	}
 
-	var versions Versions
+	var versions models.Versions
 	err, versions = versions.CreateModel(t.pathVersions)
 	if err != nil {
 		return err

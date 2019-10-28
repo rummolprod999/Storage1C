@@ -1,9 +1,10 @@
-package main
+package models
 
 import (
 	"encoding/xml"
 	"io/ioutil"
 	"os"
+	"runtime"
 	"time"
 )
 
@@ -52,6 +53,9 @@ func (t *Versions) CreateModel(path string) (error, Versions) {
 		return err, versions
 	}
 	repairString := ReplaceBadSymbols(string(byteValue))
+	if runtime.GOOS == "windows" {
+		repairString = repairString
+	}
 	if err := xml.Unmarshal([]byte(repairString), &versions); err != nil {
 		return err, versions
 	}
