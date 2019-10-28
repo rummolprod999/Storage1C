@@ -3,6 +3,8 @@ package models
 import (
 	"bytes"
 	"encoding/xml"
+	"golang.org/x/text/encoding/unicode"
+	"golang.org/x/text/transform"
 	"io/ioutil"
 	"os"
 	"runtime"
@@ -24,18 +26,33 @@ func (t *Users) CreateModel(path string) (error, Users) {
 		return err, users
 	}
 	defer xmlFile.Close()
-	byteValue, err := ioutil.ReadAll(xmlFile)
-	if err != nil {
-		return err, users
-	}
-	repairString := ReplaceBadSymbols(string(byteValue))
+
 	if runtime.GOOS == "windows" {
-		repairString = repairString
+		O := transform.NewReader(xmlFile, unicode.UTF16(unicode.LittleEndian, unicode.IgnoreBOM).NewDecoder())
+		bt, err := ioutil.ReadAll(O)
+		if err != nil {
+			return err, users
+		}
+		repairString := string(bt)
+		repairString = ReplaceBadSymbols(repairString)
+		d := xml.NewDecoder(bytes.NewReader([]byte(repairString)))
+		d.CharsetReader = identReader
+		if err := d.Decode(&users); err != nil {
+			panic(err)
+		}
+		return nil, users
+	} else {
+		byteValue, err := ioutil.ReadAll(xmlFile)
+		if err != nil {
+			return err, users
+		}
+		repairString := ReplaceBadSymbols(string(byteValue))
+		d := xml.NewDecoder(bytes.NewReader([]byte(repairString)))
+		d.CharsetReader = identReader
+		if err := d.Decode(&users); err != nil {
+			panic(err)
+		}
+		return nil, users
 	}
-	d := xml.NewDecoder(bytes.NewReader([]byte(repairString)))
-	d.CharsetReader = identReader
-	if err := d.Decode(&users); err != nil {
-		panic(err)
-	}
-	return nil, users
+
 }
