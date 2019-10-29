@@ -26,26 +26,29 @@ func (t *Users) CreateModel(path string) (error, Users) {
 		return err, users
 	}
 	defer xmlFile.Close()
-
+	var byteValue []byte
 	if runtime.GOOS == "windows" {
 		O := transform.NewReader(xmlFile, unicode.UTF16(unicode.LittleEndian, unicode.IgnoreBOM).NewDecoder())
-		bt, err := ioutil.ReadAll(O)
+		byteValue, err = ioutil.ReadAll(O)
 		if err != nil {
 			if Debug {
 				panic(err)
 			}
 			return err, users
 		}
-		repairString := string(bt)
+		repairString := string(byteValue)
 		repairString = ReplaceBadSymbols(repairString)
 		d := xml.NewDecoder(bytes.NewReader([]byte(repairString)))
 		d.CharsetReader = identReader
 		if err := d.Decode(&users); err != nil {
+			if Debug {
+				panic(err)
+			}
 			panic(err)
 		}
 		return nil, users
 	} else {
-		byteValue, err := ioutil.ReadAll(xmlFile)
+		byteValue, err = ioutil.ReadAll(xmlFile)
 		if err != nil {
 			return err, users
 		}
@@ -53,6 +56,9 @@ func (t *Users) CreateModel(path string) (error, Users) {
 		d := xml.NewDecoder(bytes.NewReader([]byte(repairString)))
 		d.CharsetReader = identReader
 		if err := d.Decode(&users); err != nil {
+			if Debug {
+				panic(err)
+			}
 			panic(err)
 		}
 		return nil, users
