@@ -31,6 +31,9 @@ func (t *Users) CreateModel(path string) (error, Users) {
 		O := transform.NewReader(xmlFile, unicode.UTF16(unicode.LittleEndian, unicode.IgnoreBOM).NewDecoder())
 		bt, err := ioutil.ReadAll(O)
 		if err != nil {
+			if Debug {
+				panic(err)
+			}
 			return err, users
 		}
 		repairString := string(bt)

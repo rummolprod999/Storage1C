@@ -1,12 +1,12 @@
 package main
 
 import (
-	"errors"
+	"Storage1C/models"
 	"flag"
 	"fmt"
+	"github.com/jinzhu/configor"
 	"os"
 	"path/filepath"
-	"src/github.com/jinzhu/configor"
 	"sync"
 	"time"
 )
@@ -19,16 +19,12 @@ var PathTemp = ""
 var FileLog Filelog
 var SecretKey = "11111111" //change it
 var mutex sync.Mutex
-var FirstArgument = ""
 
 func GetArgs() {
 	flag.Parse()
-	FirstArgument = flag.Arg(0)
-	err := IfKeyExist(FirstArgument)
-	if err != nil {
-		Logging(err)
-		fmt.Println(err)
-		os.Exit(1)
+	ArgDebug := flag.Arg(0)
+	if ArgDebug == "debug" {
+		models.Debug = true
 	}
 }
 
@@ -103,13 +99,4 @@ func Logging(args ...interface{}) {
 	//fmt.Fprintf(file, " %s", UrlXml)
 	fmt.Fprintln(file, "")
 	mutex.Unlock()
-}
-
-func IfKeyExist(k string) error {
-	for _, v := range Config.Storages {
-		if v.Name == k {
-			return nil
-		}
-	}
-	return errors.New("bad argument")
 }

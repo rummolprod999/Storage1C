@@ -18,18 +18,15 @@ type Storage1C struct {
 	pathVersions string
 }
 
-func (t *Storage1C) Init() {
+func (t *Storage1C) Run() {
 	for _, v := range Config.Storages {
-		if v.Name == FirstArgument {
-			t.storageName = v.Name
-			t.storagePath = v.Path
-			return
-		}
+		t.storageName = v.Name
+		t.storagePath = v.Path
+		t.RunIter()
 	}
-	panic("storage not found")
 }
 
-func (t *Storage1C) Run() {
+func (t *Storage1C) RunIter() {
 	err := t.RunExternalProgram()
 	if err != nil {
 		Logging(err)
@@ -53,6 +50,9 @@ func (t *Storage1C) RunExternalProgram() error {
 	command.Stdout = &out
 	err := command.Run()
 	if err != nil {
+		if models.Debug {
+			panic(err)
+		}
 		return err
 	}
 	//fmt.Println(out.String())
